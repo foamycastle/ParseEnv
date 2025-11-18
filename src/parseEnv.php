@@ -78,9 +78,8 @@ function env_has_prefix(string $p): bool
  * @param string $k
  * @return string
  */
-function env(string $k): string
+function env(string $k, mixed $default=null): string
 {
-
-    return ($_ENV[$k] ?? ENV[$k] ?? "");
+    return ($_ENV[$k] ?? ENV[$k] ?? $default);
 }
 
