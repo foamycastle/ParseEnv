@@ -1,0 +1,21 @@
+{
+  "name": "foamycastle/parsenv",
+  "description": "A helper that parses .env files",
+  "minimum-stability": "dev",
+  "license": "GPL-3.0-or-later",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "Aaron Sollman",
+      "email": "unclepong@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^8.1"
+  },
+  "autoload": {
+    "files": [
+      "src/parseEnv.php"
+    ]
+  }
+}
