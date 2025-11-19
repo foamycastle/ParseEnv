@@ -13,6 +13,7 @@
  * @param bool $verbose
  * @return void
  */
+global $ENV;
 function parsenv(
     string $path = '.env',
     bool   $verbose = false,
@@ -28,13 +29,9 @@ function parsenv(
         $verbose && fwrite(STDERR, 'invalid path provided to parsenv');
     }
     $parsed = parse_ini_file($resolvedPath, false, INI_SCANNER_TYPED) ?: [];
-    if (PHP_SAPI == 'cli') {
-        define("ENV", $parsed);
-    } else {
-        foreach ($parsed as $key => $value) {
-            $_ENV[$key] = $value;
-        }
-    }
+
+    define("ENV", $parsed);
+
     define("PARSENV_LOADED", true);
 }
 
@@ -45,7 +42,7 @@ function parsenv(
  */
 function get_env_prefix(string $p, bool $removePrefix = true, bool $lcase = true): array
 {
-    $inputArray = PHP_SAPI == 'cli' ? ENV : $_ENV;
+    $inputArray = $ENV;
     $outputArray = array_filter($inputArray, function ($k) use ($p) {
         return str_starts_with($k, $p);
     }, ARRAY_FILTER_USE_KEY);
@@ -80,10 +77,6 @@ function env_has_prefix(string $p): bool
  */
 function env(string $k, mixed $default=''): string
 {
-    if(php_sapi_name() == 'cli') {
-        return (ENV[$k] ?? $default);
-    }else {
-        return ($_ENV[$k] ?? $default);
-    }
+    return ($ENV[$k] ?? $_ENV[$k] ?? $default);
 }
 
