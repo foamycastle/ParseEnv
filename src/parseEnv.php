@@ -19,7 +19,7 @@ function parsenv(
     bool   $verbose = false,
 ): void
 {
-
+    global $ENV;
     $resolvedPath = realpath($path);
     if ($resolvedPath === false) {
         $verbose && fwrite(STDERR, 'invalid or malformed path provided to parsenv');
@@ -29,9 +29,7 @@ function parsenv(
         $verbose && fwrite(STDERR, 'invalid path provided to parsenv');
     }
     $parsed = parse_ini_file($resolvedPath, false, INI_SCANNER_TYPED) ?: [];
-
-    define("ENV", $parsed);
-
+    $ENV = $parsed;
     define("PARSENV_LOADED", true);
 }
 
@@ -42,6 +40,7 @@ function parsenv(
  */
 function get_env_prefix(string $p, bool $removePrefix = true, bool $lcase = true): array
 {
+    global $ENV;
     $inputArray = $ENV;
     $outputArray = array_filter($inputArray, function ($k) use ($p) {
         return str_starts_with($k, $p);
@@ -77,6 +76,7 @@ function env_has_prefix(string $p): bool
  */
 function env(string $k, mixed $default=''): string
 {
+    global $ENV;
     return ($ENV[$k] ?? $_ENV[$k] ?? $default);
 }
 
