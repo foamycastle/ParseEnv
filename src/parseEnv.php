@@ -78,7 +78,7 @@ function env_has_prefix(string $p): bool
  * @param string $k
  * @return string
  */
-function env(string $k, mixed $default=null): string
+function env(string $k, mixed $default=''): string
 {
     if(php_sapi_name() == 'cli') {
         return (ENV[$k] ?? $default);
