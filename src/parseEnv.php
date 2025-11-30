@@ -42,7 +42,7 @@ function get_env_prefix(string $p, bool $removePrefix = true, bool $lcase = true
 {
     global $ENV;
     $inputArray = $ENV;
-    $outputArray = array_filter($inputArray, function ($k) use ($p) {
+    $outputArray = array_filter($inputArray ?? [], function ($k) use ($p) {
         return str_starts_with($k, $p);
     }, ARRAY_FILTER_USE_KEY);
     if ($removePrefix) {
