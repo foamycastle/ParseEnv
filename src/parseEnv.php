@@ -11,12 +11,14 @@
  * Parse an .env file and merge it into the `$_ENV` superglobal
  * @param string $path
  * @param bool $verbose
+ * @param array $vars an array of %var_name%=>replacement_value pairs that will be used to replace the values in the .env file
  * @return void
  */
 global $ENV;
 function parsenv(
     string $path = '.env',
-    bool   $verbose = false,
+    iterable|callable  $vars = [],
+    bool   $verbose = false
 ): void
 {
     global $ENV;
@@ -29,6 +31,19 @@ function parsenv(
         $verbose && fwrite(STDERR, 'invalid path provided to parsenv');
     }
     $parsed = parse_ini_file($resolvedPath, false, INI_SCANNER_TYPED) ?: [];
+    //search for and replace vars
+    if(is_callable($vars)) {
+        $vars = $vars(...);
+    }
+    foreach ($vars as $k => $v) {
+        if(array_key_exists($v,$vars)) {
+            if(is_callable($vars[$v])) {
+                $parsed[$k] = $vars[$v](...);
+            }else{
+                $parsed[$k] = $vars[$v];
+            }
+        }
+    }
     $ENV = $parsed;
     define("PARSENV_LOADED", true);
 }
