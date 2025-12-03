@@ -17,32 +17,30 @@
 global $ENV;
 function parsenv(
     string $path = '.env',
-    iterable|callable  $vars = [],
+    array|callable  $vars = [],
     bool   $verbose = false
 ): void
 {
     global $ENV;
     $resolvedPath = realpath($path);
     if ($resolvedPath === false) {
-        $verbose && fwrite(STDERR, 'invalid or malformed path provided to parsenv');
         return;
     }
-    if (!file_exists($resolvedPath)) {
-        $verbose && fwrite(STDERR, 'invalid path provided to parsenv');
+    if(!file_exists($resolvedPath)) {
+        return;
     }
     $parsed = parse_ini_file($resolvedPath, false, INI_SCANNER_TYPED) ?: [];
     //search for and replace vars
     if(is_callable($vars)) {
         $vars = $vars(...);
     }
-    foreach ($vars as $k => $v) {
-        if(array_key_exists($v,$vars)) {
-            if(is_callable($vars[$v])) {
-                $parsed[$k] = $vars[$v](...);
-            }else{
-                $parsed[$k] = $vars[$v];
-            }
-        }
+    if(!is_array($vars)) {
+        throw new InvalidArgumentException("$vars must be an iterable or, if callable, a callable that returns an iterable");
+    }
+    $search = array_keys($vars);
+    $replace = array_values($vars);
+    foreach ($parsed as $k => $v) {
+        $parsed[$k]=str_replace($search,$replace, $v);
     }
     $ENV = $parsed;
     define("PARSENV_LOADED", true);
