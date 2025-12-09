@@ -45,7 +45,7 @@ function parsenv(
     $ENV = $parsed;
     if($globalConst) {
         foreach ($parsed as $k => $v) {
-            !defined($k)||define(strtoupper($k), $v);
+            !defined($k) && define(strtoupper($k), $v);
         }
     }
     define("PARSENV_LOADED", true);
