@@ -18,7 +18,7 @@ global $ENV;
 function parsenv(
     string $path = '.env',
     array|callable  $vars = [],
-    bool   $verbose = false
+    bool   $globalConst = false
 ): void
 {
     global $ENV;
@@ -43,6 +43,11 @@ function parsenv(
         $parsed[$k]=str_replace($search,$replace, $v);
     }
     $ENV = $parsed;
+    if($globalConst) {
+        foreach ($parsed as $k => $v) {
+            !defined($k)||define(strtoupper($k), $v);
+        }
+    }
     define("PARSENV_LOADED", true);
 }
 
