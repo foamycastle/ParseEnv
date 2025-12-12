@@ -92,9 +92,10 @@ function env_has_prefix(string $p): bool
  * @param string $k
  * @return string
  */
-function env(string $k, mixed $default=''): string
-{
-    global $ENV;
-    return ($ENV[$k] ?? $_ENV[$k] ?? $default);
+if (function_exists('env') === false) {
+    function env(string $k, mixed $default = ''): string
+    {
+        global $ENV;
+        return ($ENV[$k] ?? $_ENV[$k] ?? $default);
+    }
 }
-
